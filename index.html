@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car #1 | LaFerarri</title>
+
+<style>
+    :root {
+        --primary: #4fd1c5;
+        --primary-dark: #38b2ac;
+        --secondary: #3182ce;
+        --telegram-blue: #0088cc;
+        --dark-bg: #0e0e11;
+        --card-bg: #16161c;
+        --border-color: #26262e;
+        --text-light: #e2e8f0;
+        --text-muted: #a0aec0;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a2e 100%);
+        color: var(--text-light);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        overflow-x: hidden;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 20px;
+        background: rgba(22, 22, 28, 0.9);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    /* ====== SWIPER ENHANCED ====== */
+    .swiper-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        aspect-ratio: 16/9;
+        max-height: 400px;
+        cursor: pointer;
+    }
+
+    .slides {
+        display: flex;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+    }
+
+    .slide {
+        min-width: 100%;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .slide:hover img {
+        transform: scale(1.02);
+    }
+
+    .slide-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        padding: 16px;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Navigation */
+    .nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0.9;
+        z-index: 10;
+    }
+
+    .nav:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .nav.left { left: 12px; }
+    .nav.right { right: 12px; }
+
+    .nav span {
+        font-size: 24px;
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Pagination dots */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 16px 0 20px;
+        flex-wrap: wrap;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .dot.active {
+        background: var(--primary);
+        transform: scale(1.4);
+        box-shadow: 0 0 10px var(--primary);
+    }
+
+    /* ====== FULLSCREEN MODAL ====== */
+    .fullscreen-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .fullscreen-modal.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .fullscreen-content {
+        position: relative;
+        width: 90%;
+        height: 90%;
+        max-width: 1200px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .fullscreen-slides {
+        display: flex;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+    }
+
+    .fullscreen-slide {
+        min-width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .fullscreen-slide img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .modal-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        z-index: 1001;
+    }
+
+    .modal-nav:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .modal-nav.left { left: 20px; }
+    .modal-nav.right { right: 20px; }
+
+    .modal-nav span {
+        font-size: 32px;
+        color: white;
+        font-weight: bold;
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        z-index: 1001;
+    }
+
+    .close-modal:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+
+    .close-modal span {
+        font-size: 28px;
+        color: white;
+        font-weight: bold;
+    }
+
+    .modal-pagination {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .modal-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .modal-dot.active {
+        background: var(--primary);
+        transform: scale(1.5);
+        box-shadow: 0 0 15px var(--primary);
+    }
+
+    .image-counter {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 1001;
+    }
+
+    /* ====== CONTENT ENHANCED ====== */
+    .header {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .car-title {
+        font-size: clamp(26px, 5vw, 32px);
+        font-weight: 800;
+        margin-bottom: 6px;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+
+    .car-subtitle {
+        font-size: clamp(13px, 3vw, 15px);
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+
+    .price-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .price-tag {
+        font-size: clamp(20px, 4vw, 24px);
+        font-weight: 700;
+        color: var(--primary);
+        background: rgba(79, 209, 197, 0.1);
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(79, 209, 197, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: var(--dark-bg);
+        padding: 5px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+
+    .block {
+        background: var(--card-bg);
+        margin: 16px 0;
+        padding: clamp(16px, 3vw, 20px);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .block:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .block h2 {
+        margin-top: 0;
+        font-size: clamp(16px, 3vw, 18px);
+        margin-bottom: 14px;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .block h2::before {
+        content: '';
+        width: 4px;
+        height: 18px;
+        background: var(--primary);
+        border-radius: 2px;
+        flex-shrink: 0;
+    }
+
+    .description {
+        line-height: 1.6;
+        color: var(--text-muted);
+        font-size: clamp(14px, 3vw, 15px);
+    }
+
+    .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 14px;
+        margin-top: 10px;
+    }
+
+    .spec-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease;
+    }
+
+    .spec-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--primary);
+    }
+
+    .spec-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .spec-value {
+        font-size: clamp(15px, 3vw, 18px);
+        font-weight: 700;
+        color: var(--text-light);
+    }
+
+    /* Buy Button - ИСПРАВЛЕНО: кнопка по центру на ПК */
+    .buy-button {
+        margin: 24px 0;
+        background: linear-gradient(135deg, var(--telegram-blue), #006699);
+        text-align: center;
+        padding: 16px;
+        border-radius: 14px;
+        font-size: clamp(15px, 3vw, 16px);
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        color: white;
+        display: block;
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        font-family: inherit;
+    }
+
+    .buy-button::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.7s ease;
+    }
+
+    .buy-button:hover::after {
+        left: 100%;
+    }
+
+    .buy-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 136, 204, 0.4);
+    }
+
+    .buy-button:active {
+        transform: translateY(-1px);
+    }
+
+    /* Иконка Telegram SVG - ИСПРАВЛЕНО: больше и четче */
+    .telegram-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        vertical-align: middle;
+        width: 26px;
+        height: 26px;
+    }
+
+    .telegram-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: white;
+    }
+
+    /* Footer */
+    .footer-note {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+        line-height: 1.6;
+    }
+
+    .telegram-link {
+        color: var(--telegram-blue);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .telegram-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Desktop-specific styles */
+    @media (min-width: 768px) {
+        body {
+            padding: 40px;
+        }
+        
+        .container {
+            max-width: 900px;
+            padding: 30px;
+        }
+        
+        .swiper-container {
+            aspect-ratio: 21/9;
+            max-height: 450px;
+        }
+        
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+        }
+        
+        .block:first-of-type {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .block:nth-of-type(2) {
+            grid-column: 2;
+            grid-row: 2 / span 2;
+        }
+        
+        /* ИСПРАВЛЕНО: кнопка теперь занимает всю ширину и центрируется */
+        .buy-button {
+            grid-column: 1 / -1; /* Растягиваем на обе колонки */
+            grid-row: 3;
+            margin: 20px 0;
+            padding: 18px;
+            max-width: 400px; /* Ограничиваем ширину для лучшего вида */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .footer-note {
+            grid-column: 1 / -1;
+            grid-row: 4;
+        }
+        
+        .telegram-icon {
+            width: 28px;
+            height: 28px;
+            margin-right: 14px;
+        }
+        
+        .modal-nav {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .modal-nav span {
+            font-size: 36px;
+        }
+    }
+
+    /* Mobile-specific styles */
+    @media (max-width: 480px) {
+        body {
+            padding: 10px;
+        }
+        
+        .container {
+            padding: 16px;
+            border-radius: 20px;
+        }
+        
+        .swiper-container {
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .nav {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .nav span {
+            font-size: 22px;
+        }
+        
+        .price-container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .specs-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .buy-button {
+            padding: 14px 16px;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        
+        .telegram-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .modal-nav {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .modal-nav span {
+            font-size: 26px;
+        }
+        
+        .close-modal {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .close-modal span {
+            font-size: 22px;
+        }
+    }
+
+    /* Tablet styles */
+    @media (min-width: 481px) and (max-width: 767px) {
+        .specs-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .swiper-container {
+            max-height: 350px;
+        }
+        
+        .buy-button {
+            padding: 16px 18px;
+        }
+        
+        .telegram-icon {
+            width: 25px;
+            height: 25px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ====== SWIPER ====== -->
+    <div class="swiper-container" id="swiperContainer">
+        <div class="slides" id="slides">
+            <div class="slide" data-index="0">
+                <img src="img/car1.jpg" alt="LaFerarri - Вид спереди" class="slide-image">
+                <div class="slide-overlay">Вид спереди</div>
+            </div>
+            <div class="slide" data-index="1">
+                <img src="img/car2.jpg" alt="LaFerarri - Вид сбоку" class="slide-image">
+                <div class="slide-overlay">Вид сбоку</div>
+            </div>
+            <div class="slide" data-index="2">
+                <img src="img/car3.jpg" alt="LaFerarri - Вид сзади" class="slide-image">
+                <div class="slide-overlay">Вид сзади</div>
+            </div>
+            <!-- Добавьте больше фото здесь -->
+            <!-- <div class="slide" data-index="3">
+                <img src="img/car4.png" alt="Nissan GTR R35 - Салон">
+                <div class="slide-overlay">Салон</div>
+            </div> -->
+        </div>
+
+        <div class="nav left" onclick="prev()"> <span>‹</span> </div>
+        <div class="nav right" onclick="next()"> <span>›</span> </div>
+    </div>
+
+    <div class="pagination" id="pagination">
+        <!-- Dots will be generated by JS -->
+    </div>
+
+    <!-- ====== FULLSCREEN MODAL ====== -->
+    <div class="fullscreen-modal" id="fullscreenModal">
+        <div class="fullscreen-content">
+            <div class="fullscreen-slides" id="fullscreenSlides">
+                <!-- Slides will be duplicated here -->
+            </div>
+            
+            <div class="modal-nav left" onclick="modalPrev()"> <span>‹</span> </div>
+            <div class="modal-nav right" onclick="modalNext()"> <span>›</span> </div>
+            
+            <div class="close-modal" onclick="closeModal()"> <span>×</span> </div>
+            
+            <div class="modal-pagination" id="modalPagination">
+                <!-- Modal dots will be generated by JS -->
+            </div>
+            
+            <div class="image-counter" id="imageCounter">1 / 3</div>
+        </div>
+    </div>
+
+    <!-- ====== INFO ====== -->
+    <div class="header">
+        <h1 class="car-title">LaFerarri</h1>
+        <p class="car-subtitle">Донатный автомобиль. Номер товара <b>№1</b></p>
+        
+        <div class="price-container">
+            <div class="price-tag">
+                <span>200 ₽</span>
+            </div>
+            <div class="badges">
+                <span class="badge">Спорт</span>
+                <span class="badge">Эксклюзив</span>
+                <span class="badge">В наличии</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="block">
+            <h2>Как будет происходить сделка?</h2>
+            <p class="description">
+                Пишите свой игровой ID нам в телеграм и оплачиваете услугу. После оплаты передадите автомобиль нам, и ждёте в течении нескольких <i><b>минут</b></i> пока на него установят необходимый рисунок. При готовности вам сообщать и после чего вернут автомобиль с уже готовым рисунком обратно
+            </p>
+        </div>
+
+        <div class="block">
+            <h2>Характеристики</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">Номер товара</div>
+                    <div class="spec-value"># 1</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Категория</div>
+                    <div class="spec-value">Шильды</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Слои</div>
+                    <div class="spec-value">415</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Класс</div>
+                    <div class="spec-value">А</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="tg://resolve?domain=allthewasted" class="buy-button" id="buyButton">
+            <span class="telegram-icon">
+                <!-- ИСПРАВЛЕННАЯ SVG иконка Telegram - более четкая и правильная -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+            </span>
+            Заказать
+        </a>
+
+        <div class="footer-note">
+            ⚡ В наличии. Цена включает весь описанный выше процесс.<br>
+            📞 За покупкой только в: <a href="tg://resolve?domain=allthewasted" class="telegram-link">Telegram</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let currentIndex = 0;
+let modalIndex = 0;
+const slides = document.getElementById("slides");
+const fullscreenSlides = document.getElementById("fullscreenSlides");
+const pagination = document.getElementById("pagination");
+const modalPagination = document.getElementById("modalPagination");
+const fullscreenModal = document.getElementById("fullscreenModal");
+const imageCounter = document.getElementById("imageCounter");
+const totalSlides = slides.children.length;
+let autoSlideInterval;
+
+// Initialize pagination dots
+function initPagination() {
+    pagination.innerHTML = '';
+    modalPagination.innerHTML = '';
+    
+    for (let i = 0; i < totalSlides; i++) {
+        // Main swiper dots
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === currentIndex) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+            currentIndex = i;
+            updateSwiper();
+            resetAutoSlide();
+        });
+        pagination.appendChild(dot);
+        
+        // Modal dots
+        const modalDot = document.createElement('div');
+        modalDot.className = 'modal-dot';
+        if (i === modalIndex) modalDot.classList.add('active');
+        modalDot.addEventListener('click', () => {
+            modalIndex = i;
+            updateModal();
+        });
+        modalPagination.appendChild(modalDot);
+    }
+    
+    updateImageCounter();
+}
+
+// Initialize fullscreen slides
+function initFullscreenSlides() {
+    fullscreenSlides.innerHTML = '';
+    for (let i = 0; i < totalSlides; i++) {
+        const slide = slides.children[i].cloneNode(true);
+        slide.classList.add('fullscreen-slide');
+        fullscreenSlides.appendChild(slide);
+    }
+}
+
+// Update main swiper
+function updateSwiper() {
+    slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+    
+    // Update active dot
+    document.querySelectorAll('.dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentIndex);
+    });
+}
+
+// Update modal
+function updateModal() {
+    fullscreenSlides.style.transform = `translateX(-${modalIndex * 100}%)`;
+    
+    // Update modal dots
+    document.querySelectorAll('.modal-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === modalIndex);
+    });
+    
+    updateImageCounter();
+}
+
+function updateImageCounter() {
+    imageCounter.textContent = `${modalIndex + 1} / ${totalSlides}`;
+}
+
+// Navigation functions
+function next() {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    updateSwiper();
+    resetAutoSlide();
+}
+
+function prev() {
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    updateSwiper();
+    resetAutoSlide();
+}
+
+function modalNext() {
+    modalIndex = (modalIndex + 1) % totalSlides;
+    updateModal();
+}
+
+function modalPrev() {
+    modalIndex = (modalIndex - 1 + totalSlides) % totalSlides;
+    updateModal();
+}
+
+// Open fullscreen modal
+function openModal(index) {
+    modalIndex = index;
+    updateModal();
+    fullscreenModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close fullscreen modal
+function closeModal() {
+    fullscreenModal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Auto-slide
+function resetAutoSlide() {
+    clearInterval(autoSlideInterval);
+    startAutoSlide();
+}
+
+function startAutoSlide() {
+    autoSlideInterval = setInterval(next, 5000);
+}
+
+/* SWIPE for main swiper */
+let startX = 0;
+let isSwiping = false;
+
+slides.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+    isSwiping = true;
+    clearInterval(autoSlideInterval);
+});
+
+slides.addEventListener("touchmove", e => {
+    if (!isSwiping) return;
+    let currentX = e.touches[0].clientX;
+    let diff = startX - currentX;
+    slides.style.transform = `translateX(calc(-${currentIndex * 100}% - ${diff}px))`;
+});
+
+slides.addEventListener("touchend", e => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    
+    let endX = e.changedTouches[0].clientX;
+    if (startX - endX > 80) next();
+    else if (endX - startX > 80) prev();
+    else updateSwiper();
+    
+    startAutoSlide();
+});
+
+/* SWIPE for fullscreen modal */
+let modalStartX = 0;
+let isModalSwiping = false;
+
+fullscreenSlides.addEventListener("touchstart", e => {
+    modalStartX = e.touches[0].clientX;
+    isModalSwiping = true;
+});
+
+fullscreenSlides.addEventListener("touchmove", e => {
+    if (!isModalSwiping) return;
+    let currentX = e.touches[0].clientX;
+    let diff = modalStartX - currentX;
+    fullscreenSlides.style.transform = `translateX(calc(-${modalIndex * 100}% - ${diff}px))`;
+});
+
+fullscreenSlides.addEventListener("touchend", e => {
+    if (!isModalSwiping) return;
+    isModalSwiping = false;
+    
+    let endX = e.changedTouches[0].clientX;
+    if (modalStartX - endX > 80) modalNext();
+    else if (endX - modalStartX > 80) modalPrev();
+    else updateModal();
+});
+
+// Click on slide to open modal
+document.querySelectorAll('.slide').forEach((slide, index) => {
+    slide.addEventListener('click', (e) => {
+        // Check if click was on navigation buttons
+        if (!e.target.closest('.nav')) {
+            openModal(index);
+        }
+    });
+});
+
+// Keyboard navigation for modal
+document.addEventListener('keydown', (e) => {
+    if (fullscreenModal.classList.contains('active')) {
+        if (e.key === 'ArrowRight') modalNext();
+        if (e.key === 'ArrowLeft') modalPrev();
+        if (e.key === 'Escape') closeModal();
+    }
+});
+
+// Pause auto-slide on hover
+slides.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+slides.addEventListener('mouseleave', startAutoSlide);
+
+// Handle buy button click
+document.getElementById('buyButton').addEventListener('click', function(e) {
+    this.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+        this.style.transform = '';
+    }, 200);
+    
+    window.open(this.href, '_blank');
+    e.preventDefault();
+});
+
+// Close modal when clicking outside image
+fullscreenModal.addEventListener('click', (e) => {
+    if (e.target === fullscreenModal) {
+        closeModal();
+    }
+});
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+    initPagination();
+    initFullscreenSlides();
+    startAutoSlide();
+    
+    // Handle external links
+    document.querySelectorAll('a[href^="https://"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            window.open(this.href, '_blank');
+            e.preventDefault();
+        });
+    });
+});
+
+// Function to add more images dynamically
+function addMoreImages(imagePaths, captions) {
+    const swiperContainer = document.querySelector('.swiper-container');
+    
+    imagePaths.forEach((path, index) => {
+        const newIndex = totalSlides + index;
+        
+        // Add to main swiper
+        const newSlide = document.createElement('div');
+        newSlide.className = 'slide';
+        newSlide.dataset.index = newIndex;
+        newSlide.innerHTML = `
+            <img src="${path}" alt="${captions[index] || 'Nissan GTR R35'}" class="slide-image">
+            <div class="slide-overlay">${captions[index] || 'Дополнительный вид'}</div>
+        `;
+        slides.appendChild(newSlide);
+        
+        // Add click event
+        newSlide.addEventListener('click', () => openModal(newIndex));
+        
+        // Add to fullscreen modal
+        const fullscreenSlide = newSlide.cloneNode(true);
+        fullscreenSlide.classList.add('fullscreen-slide');
+        fullscreenSlides.appendChild(fullscreenSlide);
+    });
+    
+    // Reinitialize pagination with new total
+    initPagination();
+}
+</script>
+
+</body>
+</html>
