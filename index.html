@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car #1 | BMW M5 F90</title>
+
+<style>
+    :root {
+        --primary: #4fd1c5;
+        --primary-dark: #38b2ac;
+        --secondary: #3182ce;
+        --telegram-blue: #0088cc;
+        --dark-bg: #0e0e11;
+        --card-bg: #16161c;
+        --border-color: #26262e;
+        --text-light: #e2e8f0;
+        --text-muted: #a0aec0;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a2e 100%);
+        color: var(--text-light);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        overflow-x: hidden;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 20px;
+        background: rgba(22, 22, 28, 0.9);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    /* ====== SWIPER ENHANCED ====== */
+    .swiper-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        aspect-ratio: 16/9;
+        max-height: 400px;
+    }
+
+    /* Для десктопа - старый подход */
+    .slides {
+        display: flex;
+        height: 100%;
+    }
+
+    /* Для мобильных - CSS Scroll Snap */
+    .swiper-container.mobile-snap {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        cursor: grab;
+    }
+
+    .swiper-container.mobile-snap .slides {
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .swiper-container.mobile-snap .slide {
+        scroll-snap-align: center;
+        flex: 0 0 100%;
+    }
+
+    /* Скрываем скроллбар */
+    .swiper-container.mobile-snap::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .swiper-container.mobile-snap {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .slide {
+        min-width: 100%;
+        position: relative;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        user-select: none;
+        -webkit-user-drag: none;
+        -webkit-touch-callout: none;
+    }
+
+    .slide-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        padding: 16px;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        pointer-events: none;
+    }
+
+    /* Navigation - скрываем на мобильных при Scroll Snap */
+    .swiper-container.mobile-snap .nav {
+        display: none;
+    }
+
+    .nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        opacity: 0.9;
+        z-index: 10;
+    }
+
+    .nav:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .nav.left { left: 12px; }
+    .nav.right { right: 12px; }
+
+    .nav span {
+        font-size: 24px;
+        color: white;
+        font-weight: bold;
+    }
+
+    /* Pagination dots */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 16px 0 20px;
+        flex-wrap: wrap;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .dot.active {
+        background: var(--primary);
+        transform: scale(1.4);
+        box-shadow: 0 0 10px var(--primary);
+    }
+
+    /* ====== FULLSCREEN MODAL - УПРОЩЕННАЯ ВЕРСИЯ ====== */
+    .fullscreen-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        padding: 20px;
+    }
+
+    .fullscreen-modal.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .fullscreen-modal img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        z-index: 1001;
+    }
+
+    .close-modal:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+
+    .close-modal span {
+        font-size: 28px;
+        color: white;
+        font-weight: bold;
+    }
+
+    .image-counter {
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 1001;
+    }
+
+    /* ====== CONTENT ENHANCED ====== */
+    .header {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .car-title {
+        font-size: clamp(26px, 5vw, 32px);
+        font-weight: 800;
+        margin-bottom: 6px;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+
+    .car-subtitle {
+        font-size: clamp(13px, 3vw, 15px);
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        line-height: 1.5;
+    }
+
+    .price-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .price-tag {
+        font-size: clamp(20px, 4vw, 24px);
+        font-weight: 700;
+        color: var(--primary);
+        background: rgba(79, 209, 197, 0.1);
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(79, 209, 197, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: var(--dark-bg);
+        padding: 5px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+
+    .block {
+        background: var(--card-bg);
+        margin: 16px 0;
+        padding: clamp(16px, 3vw, 20px);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .block:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .block h2 {
+        margin-top: 0;
+        font-size: clamp(16px, 3vw, 18px);
+        margin-bottom: 14px;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .block h2::before {
+        content: '';
+        width: 4px;
+        height: 18px;
+        background: var(--primary);
+        border-radius: 2px;
+        flex-shrink: 0;
+    }
+
+    .description {
+        line-height: 1.6;
+        color: var(--text-muted);
+        font-size: clamp(14px, 3vw, 15px);
+    }
+
+    .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 14px;
+        margin-top: 10px;
+    }
+
+    .spec-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s ease;
+    }
+
+    .spec-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--primary);
+    }
+
+    .spec-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .spec-value {
+        font-size: clamp(15px, 3vw, 18px);
+        font-weight: 700;
+        color: var(--text-light);
+    }
+
+    /* Buy Button */
+    .buy-button {
+        margin: 24px 0;
+        background: linear-gradient(135deg, var(--telegram-blue), #006699);
+        text-align: center;
+        padding: 16px;
+        border-radius: 14px;
+        font-size: clamp(15px, 3vw, 16px);
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        color: white;
+        display: block;
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        font-family: inherit;
+    }
+
+    .buy-button::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.7s ease;
+    }
+
+    .buy-button:hover::after {
+        left: 100%;
+    }
+
+    .buy-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 136, 204, 0.4);
+    }
+
+    .buy-button:active {
+        transform: translateY(-1px);
+    }
+
+    /* Иконка Telegram SVG */
+    .telegram-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        vertical-align: middle;
+        width: 26px;
+        height: 26px;
+    }
+
+    .telegram-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: white;
+    }
+
+    /* Footer */
+    .footer-note {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+        line-height: 1.6;
+    }
+
+    .telegram-link {
+        color: var(--telegram-blue);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .telegram-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Desktop-specific styles */
+    @media (min-width: 768px) {
+        body {
+            padding: 40px;
+        }
+        
+        .container {
+            max-width: 900px;
+            padding: 30px;
+        }
+        
+        .swiper-container {
+            aspect-ratio: 21/9;
+            max-height: 450px;
+        }
+        
+        .swiper-container.mobile-snap {
+            overflow: hidden;
+            scroll-snap-type: none;
+        }
+        
+        .swiper-container.mobile-snap .nav {
+            display: flex;
+        }
+        
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+        }
+        
+        .block:first-of-type {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .block:nth-of-type(2) {
+            grid-column: 2;
+            grid-row: 2 / span 2;
+        }
+        
+        .buy-button {
+            grid-column: 1 / -1;
+            grid-row: 3;
+            margin: 20px 0;
+            padding: 18px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .footer-note {
+            grid-column: 1 / -1;
+            grid-row: 4;
+        }
+        
+        .telegram-icon {
+            width: 28px;
+            height: 28px;
+            margin-right: 14px;
+        }
+        
+        .modal-nav {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .modal-nav span {
+            font-size: 36px;
+        }
+        
+        .fullscreen-slide img {
+            max-width: 85%;
+            max-height: 85%;
+        }
+    }
+
+    /* Mobile-specific styles */
+    @media (max-width: 480px) {
+        body {
+            padding: 10px;
+        }
+        
+        .container {
+            padding: 16px;
+            border-radius: 20px;
+        }
+        
+        .swiper-container {
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .nav {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .nav span {
+            font-size: 22px;
+        }
+        
+        .price-container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .specs-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .buy-button {
+            padding: 14px 16px;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        
+        .telegram-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .modal-nav {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .modal-nav span {
+            font-size: 26px;
+        }
+        
+        .close-modal {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .close-modal span {
+            font-size: 22px;
+        }
+        
+        .fullscreen-slide img {
+            max-width: 95%;
+            max-height: 95%;
+        }
+    }
+
+    /* Tablet styles */
+    @media (min-width: 481px) and (max-width: 767px) {
+        .specs-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .swiper-container {
+            max-height: 350px;
+        }
+        
+        .buy-button {
+            padding: 16px 18px;
+        }
+        
+        .telegram-icon {
+            width: 25px;
+            height: 25px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ====== SWIPER ====== -->
+    <div class="swiper-container" id="swiperContainer">
+        <div class="slides" id="slides">
+            <div class="slide" data-index="0">
+                <img src="img/car1.jpg" alt=" Вид сбоку" class="slide-image">
+                <div class="slide-overlay">Вид сбоку</div>
+            </div>
+            <div class="slide" data-index="1">
+                <img src="img/car2.jpg" alt="Вид спереди" class="slide-image">
+                <div class="slide-overlay">Вид спереди</div>
+            </div>
+            <div class="slide" data-index="2">
+                <img src="img/car3.jpg" alt="Вид сзади" class="slide-image">
+                <div class="slide-overlay">Вид сзади</div>
+            </div>
+            <div class="slide" data-index="3">
+                <img src="img/car4.jpg" alt="Дополнительно" class="slide-image">
+                <div class="slide-overlay">Доролнительно</div>
+            </div>
+        </div>
+
+        <div class="nav left" onclick="prevSlide()"> <span>‹</span> </div>
+        <div class="nav right" onclick="nextSlide()"> <span>›</span> </div>
+    </div>
+
+    <div class="pagination" id="pagination">
+        <!-- Dots will be generated by JS -->
+    </div>
+
+    <!-- ====== FULLSCREEN MODAL - УПРОЩЕННАЯ ВЕРСИЯ ====== -->
+    <div class="fullscreen-modal" id="fullscreenModal">
+        <img id="fullscreenImage" src="" alt="">
+        <div class="close-modal" onclick="closeModal()"> <span>×</span> </div>
+    </div>
+
+    <!-- ====== INFO ====== -->
+    <div class="header">
+        <h1 class="car-title">BMW M5 F90</h1>
+        <p class="car-subtitle">Номер товара <b>№1</b></p>
+        
+        <div class="price-container">
+            <div class="price-tag">
+                <span>200 ₽</span>
+            </div>
+            <div class="badges">
+                <span class="badge">Спорт</span>
+                <span class="badge">Эксклюзив</span>
+                <span class="badge">В наличии</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="block">
+            <h2>Как будет происходить сделка?</h2>
+            <p class="description">
+                Пишите свой игровой ID нам в телеграм и оплачиваете услугу. После оплаты передадите автомобиль нам, и ждёте в течении нескольких <i><b>минут</b></i> пока на него установят необходимый рисунок. При готовности вам сообщать и после чего вернут автомобиль с уже готовым рисунком обратно
+            </p>
+        </div>
+
+        <div class="block">
+            <h2>Характеристики</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">Номер товара</div>
+                    <div class="spec-value"># 1</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Цвет</div>
+                    <div class="spec-value">Металлик</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Слои</div>
+                    <div class="spec-value">201</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Категория</div>
+                    <div class="spec-value">Шильды</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="https://t.me/m/FaTpzm6sZTkx" class="buy-button" id="buyButton">
+            <span class="telegram-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+            </span>
+            Заказать
+        </a>
+
+        <div class="footer-note">
+            ⚡ В наличии. Цена включает весь описанный выше процесс.<br>
+            📞 За покупкой только в: <a href="tg://resolve?domain=allthewasted" class="telegram-link">Telegram</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+let currentSlideIndex = 0;
+let isMobile = false;
+let autoSlideInterval = null;
+
+const swiperContainer = document.getElementById('swiperContainer');
+const slidesContainer = document.getElementById('slides');
+const paginationContainer = document.getElementById('pagination');
+const fullscreenModal = document.getElementById('fullscreenModal');
+const fullscreenImage = document.getElementById('fullscreenImage');
+
+const slides = Array.from(slidesContainer.children);
+const totalSlides = slides.length;
+
+// ========== ИНИЦИАЛИЗАЦИЯ ==========
+function init() {
+    // Определяем, мобильное ли устройство
+    isMobile = window.innerWidth <= 768;
+    
+    // Инициализируем пагинацию
+    initPagination();
+    
+    // Настраиваем слайдер в зависимости от устройства
+    setupSlider();
+    
+    // Запускаем автопрокрутку только на десктопе
+    if (!isMobile) {
+        startAutoSlide();
+    }
+}
+
+// ========== НАСТРОЙКА СЛАЙДЕРА ==========
+function setupSlider() {
+    if (isMobile) {
+        // Для мобильных: CSS Scroll Snap
+        swiperContainer.classList.add('mobile-snap');
+        setupScrollSnap();
+    } else {
+        // Для десктопа: JS слайдер
+        swiperContainer.classList.remove('mobile-snap');
+        setupDesktopSlider();
+    }
+}
+
+// ========== CSS SCROLL SNAP (МОБИЛЬНЫЕ) ==========
+function setupScrollSnap() {
+    // Убираем transition для мобильных
+    slidesContainer.style.transition = 'none';
+    
+    // Наблюдаем за видимостью слайдов для обновления пагинации
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const index = parseInt(entry.target.dataset.index);
+                    currentSlideIndex = index;
+                    updatePagination();
+                }
+            });
+        },
+        {
+            root: swiperContainer,
+            threshold: 0.5
+        }
+    );
+    
+    // Начинаем наблюдать за каждым слайдом
+    slides.forEach(slide => observer.observe(slide));
+    
+    // Обработчик клика для открытия изображения в fullscreen
+    slides.forEach((slide, index) => {
+        let touchStartTime = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let hasMoved = false;
+        
+        // Обработка touch событий для правильного определения клика на мобильных
+        slide.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            hasMoved = false;
+        }, { passive: true });
+        
+        slide.addEventListener('touchmove', (e) => {
+            // Если палец сдвинулся больше чем на 10px, это не клик
+            const moveX = Math.abs(e.touches[0].clientX - touchStartX);
+            const moveY = Math.abs(e.touches[0].clientY - touchStartY);
+            if (moveX > 10 || moveY > 10) {
+                hasMoved = true;
+            }
+        }, { passive: true });
+        
+        slide.addEventListener('touchend', (e) => {
+            const touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTime;
+            
+            // Если касание было быстрым (меньше 300ms) и не было движения - это клик
+            if (touchDuration < 300 && !hasMoved) {
+                const imgSrc = slide.querySelector('img').src;
+                openFullscreen(imgSrc);
+            }
+        });
+        
+        // Обработчик click для десктопа
+        slide.addEventListener('click', (e) => {
+            // Проверяем, не кликнули ли по кнопкам навигации
+            if (!e.target.closest('.nav')) {
+                const imgSrc = slide.querySelector('img').src;
+                openFullscreen(imgSrc);
+            }
+        });
+    });
+}
+
+// ========== JS СЛАЙДЕР (ДЕСКТОП) ==========
+function setupDesktopSlider() {
+    let startX = 0;
+    let isDragging = false;
+    let currentTranslate = 0;
+    
+    // Функция обновления позиции слайдов
+    function updateSlidePosition() {
+        slidesContainer.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+        slidesContainer.style.transition = 'transform 0.5s ease';
+        updatePagination();
+    }
+    
+    // Навигация для десктопа
+    function goToSlide(index) {
+        currentSlideIndex = index;
+        updateSlidePosition();
+        resetAutoSlide();
+    }
+    
+    function nextSlide() {
+        currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+        updateSlidePosition();
+        resetAutoSlide();
+    }
+    
+    function prevSlide() {
+        currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+        updateSlidePosition();
+        resetAutoSlide();
+    }
+    
+    // Экспортируем функции для кнопок
+    window.nextSlide = nextSlide;
+    window.prevSlide = prevSlide;
+    
+    // Свайп для десктопа
+    swiperContainer.addEventListener('mousedown', startDrag);
+    swiperContainer.addEventListener('touchstart', startDrag);
+    
+    function startDrag(e) {
+        isDragging = true;
+        startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+        currentTranslate = -currentSlideIndex * 100;
+        slidesContainer.style.transition = 'none';
+        
+        if (!isMobile) {
+            clearInterval(autoSlideInterval);
+        }
+        
+        e.preventDefault();
+    }
+    
+    function drag(e) {
+        if (!isDragging) return;
+        
+        const currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+        const diffX = startX - currentX;
+        const newTranslate = currentTranslate + (diffX / swiperContainer.offsetWidth) * 100;
+        
+        slidesContainer.style.transform = `translateX(${newTranslate}%)`;
+    }
+    
+    function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        const endX = e.type.includes('mouse') ? e.pageX : e.changedTouches ? e.changedTouches[0].pageX : e.pageX;
+        const diffX = startX - endX;
+        const threshold = swiperContainer.offsetWidth * 0.2;
+        
+        if (Math.abs(diffX) > threshold) {
+            if (diffX > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        } else {
+            updateSlidePosition();
+        }
+        
+        if (!isMobile) {
+            startAutoSlide();
+        }
+    }
+    
+    swiperContainer.addEventListener('mousemove', drag);
+    swiperContainer.addEventListener('touchmove', drag, { passive: true });
+    
+    swiperContainer.addEventListener('mouseup', endDrag);
+    swiperContainer.addEventListener('mouseleave', endDrag);
+    swiperContainer.addEventListener('touchend', endDrag);
+    
+    // Обработчик клика для открытия модального окна
+    slides.forEach((slide, index) => {
+        slide.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav') && !isDragging) {
+                const imgSrc = slide.querySelector('img').src;
+                openFullscreen(imgSrc);
+            }
+        });
+    });
+}
+
+// ========== ПАГИНАЦИЯ ==========
+function initPagination() {
+    paginationContainer.innerHTML = '';
+    
+    for (let i = 0; i < totalSlides; i++) {
+        // Точки для основного слайдера
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === currentSlideIndex) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+            if (isMobile) {
+                // На мобильных скроллим к слайду
+                const slide = slides[i];
+                slide.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+                // На десктопе переключаем слайд
+                if (window.goToSlide) {
+                    window.goToSlide(i);
+                }
+            }
+        });
+        paginationContainer.appendChild(dot);
+    }
+}
+
+function updatePagination() {
+    document.querySelectorAll('.dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlideIndex);
+    });
+}
+
+// ========== ПОЛНОЭКРАННОЕ ОКНО - УПРОЩЕННАЯ ВЕРСИЯ ==========
+function openFullscreen(imgSrc) {
+    fullscreenImage.src = imgSrc;
+    fullscreenModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    fullscreenModal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Экспортируем функцию для кнопки
+window.closeModal = closeModal;
+
+// ========== АВТОПРОКРУТКА (ТОЛЬКО ДЛЯ ДЕСКТОПА) ==========
+function startAutoSlide() {
+    if (isMobile) return;
+    
+    clearInterval(autoSlideInterval);
+    autoSlideInterval = setInterval(() => {
+        if (window.nextSlide) {
+            window.nextSlide();
+        }
+    }, 5000);
+}
+
+function resetAutoSlide() {
+    if (isMobile) return;
+    
+    clearInterval(autoSlideInterval);
+    startAutoSlide();
+}
+
+// ========== ОБРАБОТЧИК КНОПКИ ЗАКАЗА ==========
+document.getElementById('buyButton').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Анимация кнопки
+    this.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+        this.style.transform = '';
+    }, 200);
+    
+    // Открываем Telegram
+    try {
+        window.location.href = this.href;
+    } catch (err) {
+        window.open(this.href, '_blank');
+    }
+});
+
+// ========== ОБРАБОТЧИКИ СОБЫТИЙ ==========
+document.addEventListener('DOMContentLoaded', init);
+
+// Обработка изменения размера окна
+window.addEventListener('resize', () => {
+    const wasMobile = isMobile;
+    isMobile = window.innerWidth <= 768;
+    
+    // Если режим изменился (с мобильного на десктоп или наоборот)
+    if (wasMobile !== isMobile) {
+        setupSlider();
+        
+        if (!isMobile) {
+            // На десктопе обновляем позицию слайдов
+            if (window.goToSlide) {
+                window.goToSlide(currentSlideIndex);
+            }
+            startAutoSlide();
+        } else {
+            // На мобильных останавливаем автопрокрутку
+            clearInterval(autoSlideInterval);
+        }
+    }
+});
+
+// Закрытие модального окна при клике вне изображения
+fullscreenModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Закрытие модального окна по клавише Escape
+document.addEventListener('keydown', (e) => {
+    if (fullscreenModal.classList.contains('active') && e.key === 'Escape') {
+        closeModal();
+    }
+});
+
+</script>
+
+</body>
+</html>
